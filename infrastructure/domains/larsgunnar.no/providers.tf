@@ -5,6 +5,15 @@ terraform {
       version = "5.11.0"
     }
   }
+
+  # This is Hetzner's Ceph Object Storage
+  backend "s3" {
+    bucket = "zabronax-state"
+    key    = "larsgunnar.no/terraform.tfstate"
+
+    skip_region_validation      = true
+    skip_credentials_validation = true
+  }
 }
 
 variable "cloudflare_token" {
