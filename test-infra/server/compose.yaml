@@ -1,0 +1,12 @@
+name: test-infra-server
+
+services:
+  podinfo:
+    image: stefanprodan/podinfo:7.0.0
+    ports:
+      - 9898:9898
+    environment:
+      PODINFO_UI_COLOR: blue
+      PODINFO_UI_MESSAGE: Hello from test-infra-server
+      PODINFO_UI_MESSAGE_COLOR: red
+      PODINFO_UI_MESSAGE_BACKGROUND_COLOR: yellow

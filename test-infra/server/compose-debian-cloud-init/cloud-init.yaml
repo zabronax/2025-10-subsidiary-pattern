@@ -1,0 +1,396 @@
+#cloud-config
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - git
+  - ufw
+
+write_files:
+  # Reconciliation service & timer
+  - path: /etc/systemd/system/reconcile.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=Run reconciliation script
+      Requires=setup-docker-compose.service
+      After=setup-docker-compose.service
+      After=docker.service
+
+      [Service]
+      Type=oneshot
+      ExecStartPre=/bin/mkdir -p /srv/gitops
+      ExecStart=/usr/local/bin/reconcile.sh
+
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /etc/systemd/system/reconcile.timer
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=Timer for reconciliation script
+
+      [Timer]
+      OnBootSec=${boot_delay}
+      OnUnitActiveSec=${reconciliation_intervall}
+      Persistent=true
+
+      [Install]
+      WantedBy=timers.target
+
+  - path: /usr/local/bin/reconcile.sh
+    permissions: '0755'
+    content: |
+      ${indented_reconciliation_script}
+
+  # Limit journald log retention
+  - path: /etc/systemd/journald.conf.d/99-limits.conf
+    permissions: '0644'
+    content: |
+      [Journal]
+      SystemMaxUse=200M
+      RuntimeMaxUse=50M
+
+  # Harden Kernel and Network
+  - path: /etc/sysctl.d/99-hardening.conf
+    permissions: '0644'
+    content: |
+      # Kernel hardening
+      kernel.kptr_restrict=2
+      kernel.dmesg_restrict=1
+      fs.protected_symlinks=1
+      fs.protected_hardlinks=1
+      kernel.perf_event_paranoid=2
+      kernel.pid_max=65536
+      kernel.unprivileged_bpf_disabled=1
+
+      # Network - IPv4
+      net.ipv4.conf.all.rp_filter=2
+      net.ipv4.conf.default.rp_filter=2
+      net.ipv4.conf.all.accept_redirects=0
+      net.ipv4.conf.default.accept_redirects=0
+      net.ipv4.conf.all.send_redirects=0
+      net.ipv4.conf.default.send_redirects=0
+      net.ipv4.icmp_echo_ignore_broadcasts=1
+      net.ipv4.icmp_ignore_bogus_error_responses=1
+      net.ipv4.conf.all.accept_source_route=0
+      net.ipv4.conf.default.accept_source_route=0
+      net.ipv4.tcp_syncookies=1
+      net.ipv4.tcp_fin_timeout=15
+
+      # Network - IPv6
+      net.ipv6.conf.all.accept_redirects=0
+      net.ipv6.conf.default.accept_redirects=0
+      net.ipv6.conf.all.accept_source_route=0
+      net.ipv6.conf.default.accept_source_route=0
+
+  # Harden baseline image by masking unwanted services
+  # Package mgmt noise
+  - path: /etc/systemd/system/apt-daily.timer
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/apt-daily-upgrade.timer
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/unattended-upgrades.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/dpkg-db-backup.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/man-db.timer
+    permissions: '0000'
+    content: ""
+
+  # Legacy daemons
+  - path: /etc/systemd/system/acpid.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/acpid.socket
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/acpid.path
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/atd.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/cron.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/logrotate.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/rc-local.service
+    permissions: '0000'
+    content: ""
+
+  # Storage related
+  - path: /etc/systemd/system/lvm2-monitor.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/lvm2-lvmpolld.socket
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/dm-event.socket
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/mdadm-shutdown.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/e2scrub_all.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/e2scrub_reap.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/fstrim.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/iscsi.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/iscsid.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/iscsi-shutdown.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/fcoe.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/rbdmap.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/fstrim.timer
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/e2scrub_all.timer
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/blk-availability.service
+    permissions: '0000'
+    content: ""
+
+  # Desktop/interactive junk
+  - path: /etc/systemd/system/display-manager.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/console-screen.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/plymouth-quit-wait.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/plymouth-start.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/systemd-fsckd.socket
+    permissions: '0000'
+    content: ""
+
+  # Extra TTYs
+  - path: /etc/systemd/system/getty.target
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/getty@.service
+    permissions: '0000'
+    content: ""
+    # Hetzner Cloud recovery console
+  - path: /etc/systemd/system/getty@tty1.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/getty@tty2.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/getty@tty3.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/getty@tty4.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/getty@tty5.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/getty@tty6.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/serial-getty@ttyAMA0.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/serial-getty@ttyS1.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/serial-getty@ttyS2.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/serial-getty@ttyS3.service
+    permissions: '0000'
+    content: ""
+
+  # Systemd nice-to-haves
+  - path: /etc/systemd/system/systemd-repart.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/systemd-pstore.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/dpkg-db-backup.timer
+    permissions: '0000'
+    content: ""
+
+  # Legacy logging
+  - path: /etc/systemd/system/rsyslog.service
+    permissions: '0000'
+    content: ""
+  - path: /etc/systemd/system/logrotate.timer
+    permissions: '0000'
+    content: ""
+  
+  # Legacy compatability
+  - path: /etc/systemd/system/systemd-initctl.socket
+    permissions: '0000'
+    content: ""
+
+  # Firewall service
+  - path: /etc/systemd/system/setup-firewall.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=Setup strict firewall rules
+      After=network.target
+      Before=ufw.service
+      Before=reconcile.service
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      ExecStart=/usr/local/bin/setup-firewall.sh
+
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /usr/local/bin/setup-firewall.sh
+    permissions: '0755'
+    content: |
+      #!/bin/sh
+      set -e
+      ufw allow 22/tcp  # TODO! remove once SSH is gone
+      ufw allow 80/tcp
+      ufw allow 443/tcp
+      ufw default deny incoming
+      ufw default allow outgoing
+      ufw --force enable
+
+  # Docker install
+  - path: /etc/systemd/system/setup-docker-compose.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=Setup Docker Compose with dependencies
+      Before=reconcile.service
+      Wants=network-online.target
+      After=network-online.target
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      ExecStart=/usr/local/bin/setup-docker-compose.sh
+
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /usr/local/bin/setup-docker-compose.sh
+    permissions: '0755'
+    content: |
+      #!/bin/sh
+      set -e
+      install -m 0755 -d /etc/apt/keyrings
+      curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+      chmod a+r /etc/apt/keyrings/docker.gpg
+      echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+        https://download.docker.com/linux/debian \
+        $(lsb_release -cs) stable" \
+        > /etc/apt/sources.list.d/docker.list
+      apt-get update
+      apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+      systemctl enable --now docker
+
+  # Docker prune
+  - path: /etc/systemd/system/docker-prune.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=Nightly Docker prune
+      After=docker.service
+      Requires=docker.service
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/bin/docker system prune --force
+
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /etc/systemd/system/docker-prune.timer
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=Run nightly docker prune
+
+      [Timer]
+      OnCalendar=daily
+      RandomizedDelaySec=1h
+      Persistent=true
+
+      [Install]
+      WantedBy=timers.target
+
+  # TODO! Disable SSH once we have verified the module works
+  # SSH removal script
+  # - path: /etc/systemd/system/disable-ssh.service
+  #   permissions: '0644'
+  #   content: |
+  #     [Unit]
+  #     Description=Disable SSH access
+  #     After=network.target
+
+  #     [Service]
+  #     Type=oneshot
+  #     RemainAfterExit=yes
+  #     ExecStart=/usr/local/bin/disable-ssh.sh
+
+  # - path: /usr/local/bin/disable-ssh.sh
+  #   permissions: '0755'
+  #   content: |
+  #     #!/bin/sh
+  #     set -e
+  #     systemctl disable --now ssh.service
+
+  # Temporary hardening
+  - path: /etc/ssh/sshd_config.d/99-temporary-dev.conf
+    permissions: '0644'
+    content: |
+      PermitRootLogin prohibit-password
+      PasswordAuthentication no
+      ChallengeResponseAuthentication no
+      PubkeyAuthentication yes
+      AllowAgentForwarding no
+      AllowTcpForwarding no
+      X11Forwarding no
+
+runcmd:
+  - sysctl --system
+  
+  # Kill services that where already running
+  - systemctl daemon-reload
+  - systemctl disable --now atd.service cron.service unattended-upgrades.service serial-getty@ttyAMA0.service serial-getty@ttyS0.service
+  - systemctl daemon-reexec
+
+  - systemctl enable --now setup-firewall.service
+  - systemctl enable --now setup-docker-compose.service
+  - systemctl enable --now reconcile.timer
+  - systemctl enable --now docker-prune.timer
