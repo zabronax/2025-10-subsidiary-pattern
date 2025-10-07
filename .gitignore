@@ -1,0 +1,4 @@
+# Ingore IaC ephemeral files
+.terraform
+*.tfvars
+*.tfstate*
