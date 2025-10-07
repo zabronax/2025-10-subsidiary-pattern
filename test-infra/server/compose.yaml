@@ -2,7 +2,7 @@ name: test-infra-server
 
 services:
   podinfo:
-    image: stefanprodan/podinfo:7.0.0
+    image: ghcr.io/stefanprodan/podinfo
     ports:
       - 9898:9898
     environment:
