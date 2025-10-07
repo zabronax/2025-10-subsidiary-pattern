@@ -7,3 +7,8 @@ creation_rules:
     key_groups:
       - age:
           - *larsg
+  # larsgunnar.no domain administration
+  - path_regex: ^infrastructure/domains/larsgunnar.no/secrets.yaml$
+    key_groups:
+      - age:
+          - *larsg
