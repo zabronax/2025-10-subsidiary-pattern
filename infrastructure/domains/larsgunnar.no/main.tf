@@ -14,12 +14,3 @@ resource "cloudflare_zone" "apex" {
   name = local.domain_name
   type = "full"
 }
-
-# --- DNSSEC for apex zone --------------------------------
-# Enables DNSSEC signing for larsgunnar.no.
-# Cloudflare automatically manages keys and signatures.
-# This protects the apex zone and all records under it
-# (except fully delegated subdomains).
-resource "cloudflare_zone_dnssec" "apex_dnssec" {
-  zone_id = cloudflare_zone.apex.id
-}
