@@ -1,7 +1,7 @@
 resource "github_repository" "github_repository" {
   name = "2025-10-subsidiary-pattern"
   description = "Example repository for the subsidiary pattern"
-  visibility = "private"
+  visibility = "public"
 }
 
 output "github_repository_url" {
