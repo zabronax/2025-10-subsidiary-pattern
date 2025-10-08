@@ -12,3 +12,8 @@ creation_rules:
     key_groups:
       - age:
           - *larsg
+  # kodehode.larsgunnar.no domain administration
+  - path_regex: ^infrastructure/domains/kodehode.larsgunnar.no/secrets.yaml$
+    key_groups:
+      - age:
+          - *larsg
