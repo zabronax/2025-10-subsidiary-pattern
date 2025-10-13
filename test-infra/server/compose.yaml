@@ -26,6 +26,7 @@ services:
       - "--certificatesresolvers.desec.acme.dnschallenge.provider=desec"
       - "--certificatesresolvers.desec.acme.email=admin@${ROOT_DOMAIN_NAME}"
       - "--certificatesresolvers.desec.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.desec.acme.dnschallenge.delayBeforeCheck=60" # Increase delay for deSEC
       # Let's Encrypt's staging server
       - "--certificatesresolvers.desec.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
     # Let Traefik use external DNS resolvers
