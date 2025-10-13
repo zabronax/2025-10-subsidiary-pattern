@@ -37,11 +37,10 @@ services:
       - desec_dns01_token
     labels:
       - "traefik.enable=true"
-      # Example router for Traefik dashboard (protect behind auth in production)
       - "traefik.http.routers.traefik.rule=Host(`traefik.${ROOT_DOMAIN_NAME}`)"
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.tls.certresolver=desec"
-      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+      - "traefik.http.routers.traefik.service=api@internal"
 
   podinfo:
     image: ghcr.io/stefanprodan/podinfo
