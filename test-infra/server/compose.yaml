@@ -38,7 +38,7 @@ services:
       - "443:443"
       - "8080:8080"
     volumes:
-      - "./letsencrypt:/letsencrypt" # Persist the TLS certificates between restarts
+      - "letsencrypt:/letsencrypt" # Persist the TLS certificates between restarts
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:
       - DESEC_TOKEN_FILE=/run/secrets/desec_dns01_token
@@ -69,3 +69,6 @@ services:
 secrets:
   desec_dns01_token:
     file: /run/secrets/desec_dns01_token
+
+volumes:
+  letsencrypt:
