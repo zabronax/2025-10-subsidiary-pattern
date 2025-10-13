@@ -280,6 +280,7 @@ write_files:
       ufw allow 22/tcp  # TODO! remove once SSH is gone
       ufw allow 80/tcp
       ufw allow 443/tcp
+      ufw allow 8080/tcp # TODO! Remove once we have verified the module works
       ufw default deny incoming
       ufw default allow outgoing
       ufw --force enable
