@@ -1,12 +1,69 @@
 name: test-infra-server
 
 services:
+  traefik:
+    image: traefik:v3.1
+    container_name: traefik
+    restart: always
+    command:
+      # Core settings
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+
+      # Entry points
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+
+      # Redirect HTTP → HTTPS
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+
+      # ACME / DNS Challenge
+      - "--certificatesresolvers.dnschallenge.acme.dnschallenge=true"
+      - "--certificatesresolvers.dnschallenge.acme.dnschallenge.provider=desec" # change this
+      - "--certificatesresolvers.dnschallenge.acme.email=admin@${ROOT_DOMAIN_NAME}"
+      - "--certificatesresolvers.dnschallenge.acme.storage=/letsencrypt/acme.json"
+
+      # Let's Encrypt's staging server
+      - "--certificatesresolvers.dnschallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+
+      # Terminating TLS at Traefik
+      - "--certificatesresolvers.desec.acme.domains[0].main=${ROOT_DOMAIN_NAME}"
+      - "--certificatesresolvers.desec.acme.domains[0].sans=*.${ROOT_DOMAIN_NAME}"
+
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./letsencrypt:/letsencrypt" # Persist the TLS certificates between restarts
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    environment:
+      - DESEC_TOKEN_FILE=/run/secrets/desec_dns01_token
+    secrets:
+      - desec_dns01_token
+    labels:
+      - "traefik.enable=true"
+      # Example router for Traefik dashboard (protect behind auth in production)
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${ROOT_DOMAIN_NAME}`)"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.tls.certresolver=desec"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+
   podinfo:
     image: ghcr.io/stefanprodan/podinfo
-    ports:
-      - 80:9898
     environment:
       PODINFO_UI_COLOR: blue
       PODINFO_UI_MESSAGE: Hello from test-infra-server
       PODINFO_UI_MESSAGE_COLOR: red
       PODINFO_UI_MESSAGE_BACKGROUND_COLOR: yellow
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.podinfo.rule=Host(`podinfo.${ROOT_DOMAIN_NAME}`)"
+      - "traefik.http.routers.podinfo.entrypoints=websecure"
+      - "traefik.http.routers.podinfo.tls.certresolver=desec"
+      - "traefik.http.services.podinfo.loadbalancer.server.port=9898"
+
+secrets:
+  desec_dns01_token:
+    file: /run/secrets/desec_dns01_token
