@@ -30,8 +30,27 @@ resource "desec_rrset" "kodehode_record_a" {
   depends_on = [desec_domain.kodehode]
 }
 
+resource "desec_rrset" "kodehode_record_a_wildcard" {
+  domain = local.fqdn
+  ttl    = local.ttl
+
+  subname = "*" # Wildcard domain
+  type    = "A"
+  records = [
+    "37.27.246.167",
+  ]
+
+  depends_on = [desec_domain.kodehode]
+}
+
 output "kodehode_record_a" {
   description = "The A record for the kodehode.larsgunnar.no domain"
   value       = desec_rrset.kodehode_record_a
+  sensitive   = false
+}
+
+output "kodehode_record_a_wildcard" {
+  description = "The A record for the kodehode.larsgunnar.no domain"
+  value       = desec_rrset.kodehode_record_a_wildcard
   sensitive   = false
 }
