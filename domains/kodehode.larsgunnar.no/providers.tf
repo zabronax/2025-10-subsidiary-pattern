@@ -16,12 +16,20 @@ terraform {
   }
 }
 
-variable "desec_api_token" {
+variable "desec_token" {
   description = "The API token for the deSEC DNS provider"
   type        = string
   sensitive   = true
 }
 
 provider "desec" {
-  api_token = var.desec_api_token
+  api_token = var.desec_token
+}
+
+output "desec_name_server" {
+  description = "The name server for the deSEC DNS provider"
+  value = [
+    "ns1.desec.io",
+    "ns2.desec.org",
+  ]
 }
