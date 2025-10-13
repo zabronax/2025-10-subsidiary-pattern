@@ -29,10 +29,6 @@ services:
       - "--certificatesresolvers.desec.acme.dnschallenge.delayBeforeCheck=60" # Increase delay for deSEC
       # Let's Encrypt's staging server
       - "--certificatesresolvers.desec.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-    # Let Traefik use external DNS resolvers
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
     ports:
       - "80:80"
       - "443:443"
