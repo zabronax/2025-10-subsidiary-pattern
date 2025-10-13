@@ -1,11 +1,12 @@
 module "delegated_domain" {
-  source             = "./modules/delegated-domain"
-  cloudflare_zone_id = cloudflare_zone.apex.id
+  source = "./modules/delegated-domain"
 
-  ttl = local.ttl
-
-  # Delegated domain configuration
+  # Delegated subdomain
   fqdn = "kodehode.${local.domain_name}"
+
+  cloudflare_zone_id = cloudflare_zone.apex.id
+  ttl                = local.ttl
+
   desec_name_servers = [
     "ns1.desec.io",
     "ns2.desec.org",
