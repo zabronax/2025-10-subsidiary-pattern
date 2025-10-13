@@ -17,8 +17,8 @@ services:
       - "--entrypoints.websecure.address=:443"
 
       # Redirect HTTP → HTTPS
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      # - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      # - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
 
       # ACME / DNS Challenge
       - "--certificatesresolvers.dnschallenge.acme.dnschallenge=true"
