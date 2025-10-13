@@ -14,14 +14,14 @@ module "delegated_domain" {
 
   dnssec_ds_records = [
     {
-      key_tag     = "32103"
-      digest      = "C61C16FD5F457047BFA7CBF94BDB58D754FBA55C3DF9F516C79018E96C9EE1AF"
+      key_tag     = "45456"
+      digest      = "2a00d5055658378daa4547f977276b8b1336d08ac141703bf06c4ce4cd4d66db"
       algorithm   = 13
       digest_type = 2
     },
     {
-      key_tag     = "32103"
-      digest      = "C468693C14F304F988AE93335EC2131EEACB26D6AABA2091130B141E5819FB90BFC1337DD59124487C834815265598AE"
+      key_tag     = "45456"
+      digest      = "25103b3c686dddddd7fc3bc1fe4698f5e3f76dfdf666be1f01b719e4c8e76746c11cf6d90336444c92fd051f6d97302d"
       algorithm   = 13
       digest_type = 4
     }
