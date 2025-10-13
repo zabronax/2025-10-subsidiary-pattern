@@ -21,17 +21,12 @@ services:
       # - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
 
       # ACME / DNS Challenge
-      - "--certificatesresolvers.dnschallenge.acme.dnschallenge=true"
-      - "--certificatesresolvers.dnschallenge.acme.dnschallenge.provider=desec" # change this
-      - "--certificatesresolvers.dnschallenge.acme.email=admin@${ROOT_DOMAIN_NAME}"
-      - "--certificatesresolvers.dnschallenge.acme.storage=/letsencrypt/acme.json"
-
+      - "--certificatesresolvers.desec.acme.dnschallenge=true"
+      - "--certificatesresolvers.desec.acme.dnschallenge.provider=desec"
+      - "--certificatesresolvers.desec.acme.email=admin@${ROOT_DOMAIN_NAME}"
+      - "--certificatesresolvers.desec.acme.storage=/letsencrypt/acme.json"
       # Let's Encrypt's staging server
-      - "--certificatesresolvers.dnschallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-
-      # Terminating TLS at Traefik
-      - "--certificatesresolvers.desec.acme.domains[0].main=${ROOT_DOMAIN_NAME}"
-      - "--certificatesresolvers.desec.acme.domains[0].sans=*.${ROOT_DOMAIN_NAME}"
+      - "--certificatesresolvers.desec.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
 
     ports:
       - "80:80"
