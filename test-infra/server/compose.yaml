@@ -10,7 +10,6 @@ services:
       - "--api.dashboard=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--api.insecure=true"
 
       # Entry points
       - "--entrypoints.web.address=:80"
