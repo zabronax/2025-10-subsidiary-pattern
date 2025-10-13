@@ -10,7 +10,7 @@ packages:
 write_files:
   # Reconciliation service & timer
   - path: /etc/systemd/system/reconcile.service
-    permissions: '0644'
+    permissions: "0644"
     content: |
       [Unit]
       Description=Run reconciliation script
@@ -27,7 +27,7 @@ write_files:
       WantedBy=multi-user.target
 
   - path: /etc/systemd/system/reconcile.timer
-    permissions: '0644'
+    permissions: "0644"
     content: |
       [Unit]
       Description=Timer for reconciliation script
@@ -41,13 +41,13 @@ write_files:
       WantedBy=timers.target
 
   - path: /usr/local/bin/reconcile.sh
-    permissions: '0755'
+    permissions: "0755"
     content: |
       ${indented_reconciliation_script}
 
   # Limit journald log retention
   - path: /etc/systemd/journald.conf.d/99-limits.conf
-    permissions: '0644'
+    permissions: "0644"
     content: |
       [Journal]
       SystemMaxUse=200M
@@ -55,7 +55,7 @@ write_files:
 
   # Harden Kernel and Network
   - path: /etc/sysctl.d/99-hardening.conf
-    permissions: '0644'
+    permissions: "0644"
     content: |
       # Kernel hardening
       kernel.kptr_restrict=2
@@ -89,174 +89,174 @@ write_files:
   # Harden baseline image by masking unwanted services
   # Package mgmt noise
   - path: /etc/systemd/system/apt-daily.timer
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/apt-daily-upgrade.timer
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/unattended-upgrades.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/dpkg-db-backup.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/man-db.timer
-    permissions: '0000'
+    permissions: "0000"
     content: ""
 
   # Legacy daemons
   - path: /etc/systemd/system/acpid.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/acpid.socket
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/acpid.path
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/atd.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/cron.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/logrotate.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/rc-local.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
 
   # Storage related
   - path: /etc/systemd/system/lvm2-monitor.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/lvm2-lvmpolld.socket
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/dm-event.socket
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/mdadm-shutdown.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/e2scrub_all.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/e2scrub_reap.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/fstrim.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/iscsi.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/iscsid.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/iscsi-shutdown.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/fcoe.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/rbdmap.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/fstrim.timer
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/e2scrub_all.timer
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/blk-availability.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
 
   # Desktop/interactive junk
   - path: /etc/systemd/system/display-manager.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/console-screen.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/plymouth-quit-wait.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/plymouth-start.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/systemd-fsckd.socket
-    permissions: '0000'
+    permissions: "0000"
     content: ""
 
   # Extra TTYs
   - path: /etc/systemd/system/getty.target
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/getty@.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
     # Hetzner Cloud recovery console
   - path: /etc/systemd/system/getty@tty1.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/getty@tty2.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/getty@tty3.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/getty@tty4.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/getty@tty5.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/getty@tty6.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/serial-getty@ttyAMA0.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/serial-getty@ttyS1.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/serial-getty@ttyS2.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/serial-getty@ttyS3.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
 
   # Systemd nice-to-haves
   - path: /etc/systemd/system/systemd-repart.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/systemd-pstore.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/dpkg-db-backup.timer
-    permissions: '0000'
+    permissions: "0000"
     content: ""
 
   # Legacy logging
   - path: /etc/systemd/system/rsyslog.service
-    permissions: '0000'
+    permissions: "0000"
     content: ""
   - path: /etc/systemd/system/logrotate.timer
-    permissions: '0000'
+    permissions: "0000"
     content: ""
-  
+
   # Legacy compatability
   - path: /etc/systemd/system/systemd-initctl.socket
-    permissions: '0000'
+    permissions: "0000"
     content: ""
 
   # Firewall service
   - path: /etc/systemd/system/setup-firewall.service
-    permissions: '0644'
+    permissions: "0644"
     content: |
       [Unit]
       Description=Setup strict firewall rules
@@ -273,7 +273,7 @@ write_files:
       WantedBy=multi-user.target
 
   - path: /usr/local/bin/setup-firewall.sh
-    permissions: '0755'
+    permissions: "0755"
     content: |
       #!/bin/sh
       set -e
@@ -287,7 +287,7 @@ write_files:
 
   # Docker install
   - path: /etc/systemd/system/setup-docker-compose.service
-    permissions: '0644'
+    permissions: "0644"
     content: |
       [Unit]
       Description=Setup Docker Compose with dependencies
@@ -304,7 +304,7 @@ write_files:
       WantedBy=multi-user.target
 
   - path: /usr/local/bin/setup-docker-compose.sh
-    permissions: '0755'
+    permissions: "0755"
     content: |
       #!/bin/sh
       set -e
@@ -322,7 +322,7 @@ write_files:
 
   # Docker prune
   - path: /etc/systemd/system/docker-prune.service
-    permissions: '0644'
+    permissions: "0644"
     content: |
       [Unit]
       Description=Nightly Docker prune
@@ -337,7 +337,7 @@ write_files:
       WantedBy=multi-user.target
 
   - path: /etc/systemd/system/docker-prune.timer
-    permissions: '0644'
+    permissions: "0644"
     content: |
       [Unit]
       Description=Run nightly docker prune
@@ -373,7 +373,7 @@ write_files:
 
   # Temporary hardening
   - path: /etc/ssh/sshd_config.d/99-temporary-dev.conf
-    permissions: '0644'
+    permissions: "0644"
     content: |
       PermitRootLogin prohibit-password
       PasswordAuthentication no
@@ -385,7 +385,7 @@ write_files:
 
 runcmd:
   - sysctl --system
-  
+
   # Kill services that where already running
   - systemctl daemon-reload
   - systemctl disable --now atd.service cron.service unattended-upgrades.service serial-getty@ttyAMA0.service serial-getty@ttyS0.service
