@@ -14,6 +14,11 @@ resource "cloudflare_dns_record" "delegated_ds" {
   zone_id = var.cloudflare_zone_id
   name    = var.fqdn
   type    = "DS"
-  data    = each.value
   ttl     = var.ttl
+  data = {
+    key_tag     = each.value.key_tag
+    digest      = upper(each.value.digest)
+    algorithm   = each.value.algorithm
+    digest_type = each.value.digest_type
+  }
 }
