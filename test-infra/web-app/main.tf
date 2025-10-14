@@ -17,26 +17,49 @@ provider "vercel" {
   api_token = var.vercel_token
 }
 
-resource "vercel_project" "web_app" {
-  name      = "test-web-app"
-  framework = "nextjs"
+# Variables
+locals {
+  parent_domain = "larsgunnar.no"
+  subdomain     = "app"
+  fqdn          = "${local.subdomain}.${local.parent_domain}"
 }
 
+# Project Configuration
+resource "vercel_project" "web_app" {
+  name = "test-web-app"
+
+  root_directory = "test-infra/web-app"
+  framework      = "nextjs"
+  node_version   = "22.x"
+
+  install_command = "pnpm install"
+  build_command   = "pnpm build"
+
+  git_repository = {
+    type              = "github"
+    repo              = "zabronax/2025-10-subsidiary-pattern"
+    production_branch = "main"
+  }
+}
+
+# Domain Configuration
 resource "vercel_project_domain" "web_app_domain" {
   project_id = vercel_project.web_app.id
-  domain     = "app.larsgunnar.no"
+  domain     = local.fqdn
 }
 
-data "vercel_domain_config" "web_app_domain" {
-  project_id_or_name = vercel_project.web_app.id
-  domain             = "app.larsgunnar.no"
-}
+# TODO! Remove this once the domain delegation is propagated
+# data "vercel_domain_config" "web_app_domain" {
+#   project_id_or_name = vercel_project.web_app.id
+#   domain             = local.fqdn
+# }
 
 output "web_app_recommended_cname" {
   description = "The recommended CNAME for the web app. Needs to be added to the parent's DNS record"
   value = {
     record_type = "cname"
-    subdomain   = "app"
-    value       = data.vercel_domain_config.web_app_domain.recommended_cname
+    subdomain   = local.subdomain
+    value       = "cname.vercel-dns.com" # TODO! Remove this once the domain delegation is propagated
+    # value       = data.vercel_domain_config.web_app_domain.recommended_cname
   }
 }
