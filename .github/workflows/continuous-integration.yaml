@@ -8,27 +8,24 @@ on:
     branches: [main, develop]
 
 jobs:
-  check-hcl-formatting:
-    name: Check HCL Formatting in ${{ matrix.directory }}
+  iac-format-check:
+    name: IaC Format Check
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        directory:
-          - domains/larsgunnar.no
-          - domains/kodehode.larsgunnar.no
-          - project
-          - test-infra/server
-          - test-infra/web-app
 
     steps:
       - uses: actions/checkout@v5
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-      - run: |
-          nix develop --command bash -c "
-          echo 'Checking HCL formatting in ${{ matrix.directory }}...'
-          cd ${{ matrix.directory }}
-          tofu fmt -check -recursive .
-          "
+      - run: nix develop --command just iac-format-check
+
+  iac-validate:
+    name: IaC Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - run: nix develop --command just iac-validate
