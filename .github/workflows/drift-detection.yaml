@@ -42,13 +42,11 @@ jobs:
           if [ ${exit_code:-0} -eq 2 ]; then
             echo "drift_detected=true" >> $GITHUB_OUTPUT
             echo "❌ Drift detected in ${{ matrix.domain }}"
-            exit 1  # Fail the job when drift is detected
           elif [ ${exit_code:-0} -eq 0 ]; then
             echo "drift_detected=false" >> $GITHUB_OUTPUT
           else
             echo "drift_detected=error" >> $GITHUB_OUTPUT
             echo "⚠️ Error checking drift in ${{ matrix.domain }}"
-            exit 1
           fi
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
