@@ -62,3 +62,18 @@ jobs:
           else
             echo "⚠️ ${{ matrix.domain }}: Error checking drift" >> $GITHUB_STEP_SUMMARY
           fi
+
+  workflow-summary:
+    name: Workflow Summary
+    runs-on: ubuntu-latest
+    needs: drift-check
+    if: always()
+    steps:
+      - name: Check overall drift status
+        run: |
+          if [ "${{ needs.drift-check.result }}" != "success" ]; then
+            echo "❌ Infrastructure drift detected - workflow failed"
+            exit 1
+          else
+            echo "✅ All infrastructure components checked - no drift detected"
+          fi
