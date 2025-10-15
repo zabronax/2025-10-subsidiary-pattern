@@ -27,7 +27,7 @@ services:
       - "--certificatesresolvers.desec.acme.dnschallenge.provider=desec"
       - "--certificatesresolvers.desec.acme.email=admin@${ROOT_DOMAIN_NAME}"
       - "--certificatesresolvers.desec.acme.storage=/letsencrypt/acme.json"
-      - "--certificatesresolvers.desec.acme.dnschallenge.delayBeforeCheck=60"
+      - "--certificatesresolvers.desec.acme.dnschallenge.delayBeforeCheck=120"
     ports:
       - "80:80"
       - "443:443"
