@@ -28,6 +28,12 @@ iac-format-check:
     @just _for-each-directory "tofu fmt -check -recursive" {{iac-projects}}
 
 [group("IaC")]
+[doc("Initialize OpenTofu providers in all IaC directories")]
+iac-init:
+    @just _for-each-directory "tofu init -lockfile=readonly" {{iac-projects}}
+
+[group("IaC")]
 [doc("Validate Terraform configuration in all IaC directories")]
 iac-validate:
     @just _for-each-directory "tofu validate" {{iac-projects}}
+
