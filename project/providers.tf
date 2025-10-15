@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     github = {
-      source = "integrations/github"
+      source  = "integrations/github"
       version = "6.6.0"
     }
   }
@@ -18,8 +18,8 @@ terraform {
 
 variable "gh_token" {
   description = "GitHub token for the project's repository"
-  type = string
-  sensitive = true
+  type        = string
+  sensitive   = true
 }
 
 provider "github" {

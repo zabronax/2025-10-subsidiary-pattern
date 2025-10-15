@@ -23,6 +23,7 @@
             opentofu
             sops
             age
+            just
           ];
         };
       });
