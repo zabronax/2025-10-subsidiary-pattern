@@ -9,7 +9,7 @@ terraform {
   # This is Hetzner's Ceph Object Storage
   backend "s3" {
     bucket = "zabronax-state"
-    key    = "project/terraform.tfstate"
+    key = "project/terraform.tfstate"
 
     skip_region_validation      = true
     skip_credentials_validation = true
