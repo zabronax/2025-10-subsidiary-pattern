@@ -1,0 +1,61 @@
+name: Drift Detection
+
+on:
+  workflow_dispatch: # Manual trigger via GitHub Actions UI
+  schedule:
+    # Run daily at 2:00 AM Oslo time (1:00 AM UTC during standard time, 12:00 AM UTC during daylight saving)
+    # Cron format: "minute hour day month weekday"
+    # 0 1 * * * = minute 0, hour 1, any day, any month, any weekday (approximates 2 AM Oslo time)
+    - cron: "0 1 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  drift-check:
+    name: Drift Check - ${{ matrix.domain }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        domain:
+          - project
+          - domains/larsgunnar.no
+          - domains/kodehode.larsgunnar.no
+          - test-infra/server
+          - test-infra/web-app
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for drift
+        id: drift-check
+        run: |
+          cd ${{ matrix.domain }}
+          nix develop --command sops exec-env secrets.yaml "tofu init"
+          nix develop --command sops exec-env secrets.yaml "tofu plan -detailed-exitcode" || exit_code=$?
+
+          if [ ${exit_code:-0} -eq 2 ]; then
+            echo "drift_detected=true" >> $GITHUB_OUTPUT
+          elif [ ${exit_code:-0} -eq 0 ]; then
+            echo "drift_detected=false" >> $GITHUB_OUTPUT
+          else
+            echo "drift_detected=error" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+
+      - name: Post drift status
+        run: |
+          if [ "${{ steps.drift-check.outputs.drift_detected }}" = "true" ]; then
+            echo "❌ ${{ matrix.domain }}: Drift detected" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.drift-check.outputs.drift_detected }}" = "false" ]; then
+            echo "✅ ${{ matrix.domain }}: No drift" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ ${{ matrix.domain }}: Error checking drift" >> $GITHUB_STEP_SUMMARY
+          fi
