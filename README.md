@@ -5,7 +5,7 @@
   <h1>Subsidiary Pattern</h1>
 
   <a href="https://larsgunnar.no"><img alt="Logo" src="https://img.shields.io/badge/MADE_BY_LG-441306?style=for-the-badge"></a>
-  <a href="https://github.com/zabronax/subsidiary-pattern/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/zabronax/2025-10-subsidiary-pattern?style=for-the-badge&labelColor=441306&color=441306"></a>
+  <a href="https://github.com/zabronax/2025-10-subsidiary-pattern/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/zabronax/2025-10-subsidiary-pattern?style=for-the-badge&labelColor=441306&color=441306"></a>
 <a href="https://opentofu.org/"><img alt="OpenTofu" src="https://img.shields.io/badge/OpenTofu-441306?style=for-the-badge&logo=opentofu"></a>
 <a href="https://nixos.org/"><img alt="Nix" src="https://img.shields.io/badge/Nix_Flake-441306?style=for-the-badge&logo=nixos"></a>
 </div>
