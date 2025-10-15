@@ -14,6 +14,8 @@ module "compose-debian-cloud-init" {
   branch                  = "main"
   manifest_path           = "test-infra/server/compose.yaml"
   desec_dns01_token       = var.desec_dns01_token
+  floating_ipv4           = hcloud_floating_ip.primary_ipv4.ip_address
+  floating_ipv6           = hcloud_floating_ip.primary_ipv6.ip_address
 }
 
 resource "hcloud_ssh_key" "ssh_key" {

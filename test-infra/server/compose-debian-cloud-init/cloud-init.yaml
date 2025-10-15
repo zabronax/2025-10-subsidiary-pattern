@@ -8,6 +8,53 @@ packages:
   - ufw
 
 write_files:
+  # Disable network config
+  - path: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+    permissions: "0644"
+    content: |
+      network: { config: disabled }
+
+  # Network setup for floating IPs
+  - path: /etc/systemd/system/setup-network.service
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=Attach floating IPv4 and IPv6 addresses (Hetzner)
+      DefaultDependencies=no
+      After=network-online.target
+      Wants=network-online.target
+      Before=setup-firewall.service
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      ExecStart=/usr/local/bin/setup-network.sh
+
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /usr/local/bin/setup-network.sh
+    permissions: "0755"
+    content: |
+      #!/bin/sh
+      set -eu
+
+      echo "[setup-network] Waiting for eth0 to be ready..."
+      # Wait for carrier and DHCP to settle
+      for i in $(seq 1 10); do
+        ip link show eth0 | grep -q "state UP" && break
+        sleep 1
+      done
+
+      echo "[setup-network] Adding floating IPs..."
+      ip addr add ${floating_ipv4}/32 dev eth0 2>/dev/null
+      ip addr add ${floating_ipv6}/128 dev eth0 2>/dev/null
+
+      echo "[setup-network] Verifying addresses..."
+      ip -br addr show dev eth0
+
+      echo "[setup-network] Done."
+
   # Reconciliation service & timer
   - path: /etc/systemd/system/reconcile.service
     permissions: "0644"
@@ -398,6 +445,7 @@ runcmd:
   - systemctl disable --now atd.service cron.service unattended-upgrades.service serial-getty@ttyAMA0.service serial-getty@ttyS0.service
   - systemctl daemon-reexec
 
+  - systemctl enable --now setup-network.service
   - systemctl enable --now setup-firewall.service
   - systemctl enable --now setup-docker-compose.service
   - systemctl enable --now reconcile.timer

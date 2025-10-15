@@ -24,6 +24,18 @@ variable "desec_dns01_token" {
   sensitive   = true
 }
 
+variable "floating_ipv4" {
+  description = "The IPv4 address for the floating IP"
+  type        = string
+  sensitive   = false
+}
+
+variable "floating_ipv6" {
+  description = "The IPv6 address for the floating IP"
+  type        = string
+  sensitive   = false
+}
+
 locals {
   reconciliation_interval = var.reconciliation_interval
   git_source              = var.git_source
@@ -44,6 +56,8 @@ locals {
     # TODO! Don't do this for production workloads
     # This is only for a test server
     desec_dns01_token = var.desec_dns01_token
+    floating_ipv4     = var.floating_ipv4
+    floating_ipv6     = var.floating_ipv6
   })
 }
 
