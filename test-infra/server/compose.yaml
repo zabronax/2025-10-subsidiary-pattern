@@ -21,6 +21,7 @@ services:
 
       # Logging
       - "--log.level=DEBUG"
+      - "--certificatesresolvers.desec.acme.logger=true"
 
       # ACME / DNS Challenge (Traefik terminates TLS)
       - "--certificatesresolvers.desec.acme.dnschallenge=true"
