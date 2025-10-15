@@ -30,7 +30,7 @@ iac-format-check:
 [group("IaC")]
 [doc("Initialize OpenTofu providers in all IaC directories")]
 iac-init:
-    @just _for-each-directory "tofu init -lockfile=readonly" {{iac-projects}}
+    @just _for-each-directory "tofu init -backend=false -lockfile=readonly" {{iac-projects}}
 
 [group("IaC")]
 [doc("Validate Terraform configuration in all IaC directories")]
