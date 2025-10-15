@@ -19,6 +19,9 @@ services:
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
 
+      # Logging
+      - "--log.level=DEBUG"
+
       # ACME / DNS Challenge (Traefik terminates TLS)
       - "--certificatesresolvers.desec.acme.dnschallenge=true"
       - "--certificatesresolvers.desec.acme.dnschallenge.provider=desec"
