@@ -1,9 +1,19 @@
+variable "desec_dns01_token" {
+  description = <<EOT
+INSECURE! The token for the deSEC DNS01 challenge. This is INSECURE, and only for a test server.
+Access to this token (or similar DNS01 tokens) is potentially equivalent to full access to the domain/subdomain.
+EOT
+  type        = string
+  sensitive   = true
+}
+
 module "compose-debian-cloud-init" {
   source                  = "./compose-debian-cloud-init"
   git_source              = "https://github.com/zabronax/2025-10-subsidiary-pattern.git"
   reconciliation_interval = "1min"
   branch                  = "main"
   manifest_path           = "test-infra/server/compose.yaml"
+  desec_dns01_token       = var.desec_dns01_token
 }
 
 resource "hcloud_ssh_key" "ssh_key" {

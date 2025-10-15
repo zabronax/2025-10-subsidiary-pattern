@@ -18,6 +18,12 @@ variable "manifest_path" {
   type        = string
 }
 
+variable "desec_dns01_token" {
+  description = "INSECURE! The token for the deSEC DNS01 challenge. This is INSECURE, and only for a test server."
+  type        = string
+  sensitive   = true
+}
+
 locals {
   reconciliation_interval = var.reconciliation_interval
   git_source              = var.git_source
@@ -35,6 +41,9 @@ locals {
     reconciliation_intervall = local.reconciliation_interval
     # Mind the indentation here, as we are stiching this together manually (and hacky)
     indented_reconciliation_script = indent(6, local.reconciliation_script)
+    # TODO! Don't do this for production workloads
+    # This is only for a test server
+    desec_dns01_token = var.desec_dns01_token
   })
 }
 

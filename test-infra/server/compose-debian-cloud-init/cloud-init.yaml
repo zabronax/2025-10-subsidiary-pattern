@@ -350,6 +350,13 @@ write_files:
       [Install]
       WantedBy=timers.target
 
+  # TODO! Don't do this for production workloads
+  # This is only for a test server
+  - path: /run/secrets/desec_dns01_token
+    permissions: "0644"
+    content: |
+      ${desec_dns01_token}
+
   # TODO! Disable SSH once we have verified the module works
   # SSH removal script
   # - path: /etc/systemd/system/disable-ssh.service
