@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     github = {
-      source = "integrations/github"
+      source  = "integrations/github"
       version = "6.6.0"
     }
   }
@@ -9,7 +9,7 @@ terraform {
   # This is Hetzner's Ceph Object Storage
   backend "s3" {
     bucket = "zabronax-state"
-    key = "project/terraform.tfstate"
+    key    = "project/terraform.tfstate"
 
     skip_region_validation      = true
     skip_credentials_validation = true
@@ -18,8 +18,8 @@ terraform {
 
 variable "gh_token" {
   description = "GitHub token for the project's repository"
-  type = string
-  sensitive = true
+  type        = string
+  sensitive   = true
 }
 
 provider "github" {
