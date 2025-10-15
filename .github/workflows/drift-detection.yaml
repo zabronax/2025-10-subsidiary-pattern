@@ -61,6 +61,12 @@ jobs:
             echo "⚠️ ${{ matrix.domain }}: Error checking drift" >> $GITHUB_STEP_SUMMARY
           fi
 
+      - name: Fail job if drift detected
+        if: steps.drift-check.outputs.drift_detected == 'true' || steps.drift-check.outputs.drift_detected == 'error'
+        run: |
+          echo "Failing job due to drift or error in ${{ matrix.domain }}"
+          exit 1
+
   workflow-summary:
     name: Workflow Summary
     runs-on: ubuntu-latest
