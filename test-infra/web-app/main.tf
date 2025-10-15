@@ -5,6 +5,15 @@ terraform {
       version = "3.17.0"
     }
   }
+
+  # This is Hetzner's Ceph Object Storage
+  backend "s3" {
+    bucket = "zabronax-state"
+    key    = "test-infra/web-app/terraform.tfstate"
+
+    skip_region_validation      = true
+    skip_credentials_validation = true
+  }
 }
 
 variable "vercel_token" {
