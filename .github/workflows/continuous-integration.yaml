@@ -31,3 +31,4 @@ jobs:
           echo 'Checking HCL formatting in ${{ matrix.directory }}...'
           cd ${{ matrix.directory }}
           opentofu fmt -check -recursive .
+          "
