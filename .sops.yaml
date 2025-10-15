@@ -8,13 +8,22 @@ creation_rules:
     key_groups:
       - age:
           - *larsg
+          - *github_actions
   # larsgunnar.no domain administration
   - path_regex: ^domains/larsgunnar.no/secrets.yaml$
     key_groups:
       - age:
           - *larsg
+          - *github_actions
   # kodehode.larsgunnar.no domain administration
   - path_regex: ^domains/kodehode.larsgunnar.no/secrets.yaml$
     key_groups:
       - age:
           - *larsg
+          - *github_actions
+  # Test infrastructure
+  - path_regex: ^test-infra/.*/secrets.yaml$
+    key_groups:
+      - age:
+          - *larsg
+          - *github_actions
