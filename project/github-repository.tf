@@ -22,6 +22,19 @@ resource "github_repository" "github_repository" {
   ]
 }
 
+variable "github_action_identity" {
+  description = "The identity for GitHub Actions"
+  type        = string
+  sensitive   = true
+}
+
+# GitHub Actions secret for SOPS decryption
+resource "github_actions_secret" "sops_age_key" {
+  repository      = github_repository.github_repository.name
+  secret_name     = "SOPS_AGE_KEY"
+  plaintext_value = var.github_action_identity
+}
+
 output "github_repository_url" {
   description = "The URL of the GitHub repository"
   value       = github_repository.github_repository.http_clone_url
