@@ -37,3 +37,16 @@ iac-init:
 iac-validate:
     @just _for-each-directory "tofu validate" {{iac-projects}}
 
+[doc("Helper function to run an action on each secret file")]
+_for-each-secret-file action:
+    find .                              \
+        -name "secrets.yaml"            \
+        -type f -print0                 \
+    | while IFS= read -r -d '' file; do \
+        {{action}} "$file"; \
+    done
+
+[group("Secrets")]
+[doc("Update keys for all secrets files")]
+secrets-update-keys:
+    @just _for-each-secret-file "sops updatekeys --yes --input-type yaml"
