@@ -1,7 +1,8 @@
 resource "github_repository" "github_repository" {
-  name        = "2025-10-subsidiary-pattern"
-  description = "Example repository for the subsidiary pattern"
-  visibility  = "public"
+  name         = "2025-10-subsidiary-pattern"
+  description  = "Example repository for the subsidiary pattern"
+  visibility   = "public"
+  homepage_url = "https://larsgunnar.no"
 
   topics = [
     "infrastructure-as-code",
