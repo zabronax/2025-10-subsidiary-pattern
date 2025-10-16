@@ -40,11 +40,17 @@ jobs:
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
 
+      - name: Set date variables
+        id: date
+        run: |
+          echo "date=$(date -u +%Y%m%d)" >> $GITHUB_OUTPUT
+          echo "date-formatted=$(date -u +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: "🔄 Weekly DEK Rotation - $(date +'%Y-%m-%d')"
+          title: "🔄 Weekly DEK Rotation - ${{ steps.date.outputs.date-formatted }}"
           body: "Weekly rotation of Data Encryption Keys for all secrets files."
-          branch: dek-rotation-$(date +%Y%m%d)
+          branch: dek-rotation-${{ steps.date.outputs.date }}
           delete-branch: true
