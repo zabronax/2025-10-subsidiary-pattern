@@ -35,3 +35,22 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       - run: nix develop --command just iac-init
       - run: nix develop --command just iac-validate
+
+  ci-summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: [iac-format-check, iac-validate]
+    if: always()
+
+    steps:
+      - name: Check CI results
+        run: |
+          if [ "${{ needs.iac-format-check.result }}" == "success" ] && [ "${{ needs.iac-validate.result }}" == "success" ]; then
+            echo "✅ All CI checks passed"
+            exit 0
+          else
+            echo "❌ CI checks failed"
+            echo "Format check: ${{ needs.iac-format-check.result }}"
+            echo "Validate check: ${{ needs.iac-validate.result }}"
+            exit 1
+          fi
