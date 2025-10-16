@@ -43,8 +43,8 @@ jobs:
       - name: Set date variables
         id: date
         run: |
-          echo "date=$(date -u +%Y%m%d)" >> $GITHUB_OUTPUT
-          echo "date-formatted=$(date -u +%Y-%m-%d)" >> $GITHUB_OUTPUT
+          echo "date=$(date -u +%Y%m%d%H%M)" >> $GITHUB_OUTPUT
+          echo "date-formatted=$(date -u +%Y-%m-%dT%H:%MZ)" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
