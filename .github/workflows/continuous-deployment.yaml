@@ -16,17 +16,29 @@ permissions:
   contents: read
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.filter.outputs.changes }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            project: 'project/**'
+            domains/larsgunnar.no: 'domains/larsgunnar.no/**'
+            domains/kodehode.larsgunnar.no: 'domains/kodehode.larsgunnar.no/**'
+            test-infra/server: 'test-infra/server/**'
+            test-infra/web-app: 'test-infra/web-app/**'
+
   auto-apply:
     name: Auto Apply - ${{ matrix.domain }}
     runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.matrix != '[]' }}
     strategy:
       matrix:
-        domain:
-          - project
-          - domains/larsgunnar.no
-          - domains/kodehode.larsgunnar.no
-          - test-infra/server
-          - test-infra/web-app
+        domain: ${{ fromJSON(needs.changes.outputs.matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -84,12 +96,14 @@ jobs:
   workflow-summary:
     name: Workflow Summary
     runs-on: ubuntu-latest
-    needs: auto-apply
+    needs: [changes, auto-apply]
     if: always()
     steps:
       - name: Check overall apply status
         run: |
-          if [ "${{ needs.auto-apply.result }}" == "success" ]; then
+          if [ "${{ needs.changes.outputs.matrix }}" == "[]" ]; then
+            echo "✅ No infrastructure changes detected - no deployment needed"
+          elif [ "${{ needs.auto-apply.result }}" == "success" ]; then
             echo "✅ All infrastructure components processed successfully"
           else
             echo "❌ Infrastructure deployment failed"
