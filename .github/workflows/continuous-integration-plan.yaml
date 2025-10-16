@@ -2,7 +2,7 @@ name: Continuous Integration Plan
 
 on:
   workflow_dispatch:
-  pull_request:
+  pull_request_target:
     branches: [main]
     paths:
       - "domains/**"
@@ -23,6 +23,15 @@ jobs:
     outputs:
       matrix: ${{ steps.filter.outputs.changes }}
     steps:
+      - name: Check if PR is from trusted source
+        if: github.event_name == 'pull_request_target'
+        run: |
+          # Only run for PRs from the same repository or trusted sources
+          if [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]; then
+            echo "PR is from external repository: ${{ github.event.pull_request.head.repo.full_name }}"
+            echo "Skipping CI for security reasons"
+            exit 0
+          fi
       - uses: dorny/paths-filter@v3
         id: filter
         with:
