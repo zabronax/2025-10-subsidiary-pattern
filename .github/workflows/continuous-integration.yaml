@@ -16,10 +16,10 @@ permissions:
   pull-requests: read
 
 jobs:
-  iac-format-check:
-    name: IaC Format Check
+  changes:
     runs-on: ubuntu-latest
-
+    outputs:
+      matrix: ${{ steps.filter.outputs.changes }}
     steps:
       - name: Check if PR is from trusted source
         if: github.event_name == 'pull_request_target'
@@ -30,6 +30,29 @@ jobs:
             echo "Skipping CI for security reasons"
             exit 0
           fi
+      - name: Checkout
+        uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            iac:
+              - 'domains/**/*.tf'
+              - 'domains/**/secrets.yaml'
+              - 'project/**/*.tf'
+              - 'project/**/secrets.yaml'
+              - 'test-infra/**/*.tf'
+              - 'test-infra/**/secrets.yaml'
+              - '.github/workflows/continuous-integration.yaml'
+              - 'justfile'
+              - 'flake.nix'
+
+  iac-format-check:
+    name: IaC Format Check
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.iac == 'true' }}
+    steps:
       - uses: actions/checkout@v5
       - uses: cachix/install-nix-action@v31
         with:
@@ -39,7 +62,8 @@ jobs:
   iac-validate:
     name: IaC Validate
     runs-on: ubuntu-latest
-
+    needs: changes
+    if: ${{ needs.changes.outputs.iac == 'true' }}
     steps:
       - uses: actions/checkout@v5
       - uses: cachix/install-nix-action@v31
@@ -51,21 +75,22 @@ jobs:
   ci-summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [iac-format-check, iac-validate]
+    needs: [changes, iac-format-check, iac-validate]
     if: always()
-
     steps:
       - name: Check CI results
         run: |
-          # Handle cases where dependency jobs were skipped or didn't run
+          # Check if any IaC changes were detected
+          iac_changes="${{ needs.changes.outputs.iac }}"
           format_result="${{ needs.iac-format-check.result }}"
           validate_result="${{ needs.iac-validate.result }}"
 
+          echo "IaC changes detected: ${iac_changes:-'false'}"
           echo "Format check result: ${format_result:-'skipped'}"
           echo "Validate check result: ${validate_result:-'skipped'}"
 
-          # If both jobs were skipped (e.g., no IaC changes), consider it a pass
-          if [ "${format_result}" == "skipped" ] && [ "${validate_result}" == "skipped" ]; then
+          # If no IaC changes were detected, consider it a pass
+          if [ "${iac_changes}" != "true" ]; then
             echo "✅ No IaC changes detected - CI Summary passes"
             exit 0
           fi
