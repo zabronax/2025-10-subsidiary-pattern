@@ -67,4 +67,4 @@ secrets-update-keys:
 [group("Secrets")]
 [doc("Rotate DEK (Data Encryption Keys) for all secrets files")]
 secrets-rotate-dek:
-    @just _for-each-secret-file "sops updatekeys --yes --input-type yaml --rotate"
+    @just _for-each-secret-file "sops rotate --in-place --input-type yaml"
