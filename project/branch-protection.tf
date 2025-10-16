@@ -23,10 +23,4 @@ resource "github_branch_protection" "main" {
 
   # Enforce branch protection rules for administrators
   enforce_admins = true
-
-  # Restrict pushes that create matching branches
-  restrict_pushes {
-    blocks_creations = true
-    push_allowances  = []
-  }
 }
