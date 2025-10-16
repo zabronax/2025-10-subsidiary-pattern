@@ -1,14 +1,20 @@
 name: Labeler
 
 on:
-  - pull_request
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
-  build:
+  labeler:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
 
     steps:
-      - uses: srvaroa/labeler@1
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Label PR
+        uses: srvaroa/labeler@1
         with:
           config_path: .github/labeler-rules.yaml
         env:

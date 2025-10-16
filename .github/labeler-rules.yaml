@@ -1,0 +1,47 @@
+version: 1
+
+# NOTE: This labeler uses Go regex syntax, so special characters need to be escaped:
+# - Dots (.) must be escaped as \\. to match literal dots
+# - Use .* instead of **/* for matching any files in directories
+# - Forward slashes (/) don't need escaping in Go regex
+
+labels:
+  # Automation and CI/CD changes
+  - label: "automation"
+    files:
+      - "\\.github/.*"
+
+  # Documentation changes
+  - label: "documentation"
+    files:
+      - "docs/.*"
+  - label: "documentation"
+    files:
+      - ".*\\.md"
+  - label: "documentation"
+    files:
+      - "LICENSE"
+
+  # Project configuration changes
+  - label: "project"
+    files:
+      - "project/.*"
+  - label: "project"
+    files:
+      - "flake\\.nix"
+  - label: "project"
+    files:
+      - "flake\\.lock"
+  - label: "project"
+    files:
+      - "justfile"
+
+  # Domain and DNS changes
+  - label: "domain"
+    files:
+      - "domains/.*"
+
+  # Test changes
+  - label: "test"
+    files:
+      - "test-infra/.*"
