@@ -74,10 +74,13 @@ jobs:
     if: always()
     steps:
       - name: Check overall drift status
+        # For matrix jobs, result is "success" only if ALL matrix jobs succeed
+        # "failure" if ANY matrix job fails, "cancelled" if cancelled
         run: |
-          if [ "${{ needs.drift-check.result }}" != "success" ]; then
-            echo "❌ Infrastructure drift detected - workflow failed"
-            exit 1
-          else
+          if [ "${{ needs.drift-check.result }}" == "success" ]; then
             echo "✅ All infrastructure components checked - no drift detected"
+          else
+            echo "❌ Infrastructure drift detected - workflow failed"
+            echo "Job result: ${{ needs.drift-check.result }}"
+            exit 1
           fi
