@@ -12,7 +12,7 @@
   </div>
 
   <div>
-    <a href="https://github.com/zabronax/2025-10-subsidiary-pattern/actions/workflows/drift-detection.yaml"><img alt="Drift Detection" src="https://img.shields.io/github/actions/workflow/status/zabronax/2025-10-subsidiary-pattern/drift-detection.yaml?branch=main&style=for-the-badge&label=Drift&labelColor=441306"></a>
+     <a href="https://github.com/zabronax/2025-10-subsidiary-pattern/actions/workflows/drift-detection.yaml"><img alt="Domain Governance" src="https://img.shields.io/github/actions/workflow/status/zabronax/2025-10-subsidiary-pattern/drift-detection.yaml?branch=main&style=for-the-badge&label=Domain%20Governance&labelColor=441306"></a>
   </div>
 </div>
 
