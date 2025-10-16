@@ -1,6 +1,7 @@
 locals {
   larsgunnar_server_ipv4 = "65.109.240.156"
   larsgunnar_server_ipv6 = "2a01:4f9:c01f:49::"
+  fobar                  = "fobar"
 }
 
 resource "cloudflare_dns_record" "www" {

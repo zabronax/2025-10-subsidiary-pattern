@@ -3,7 +3,7 @@
 
 resource "github_issue_label" "automation" {
   repository  = github_repository.github_repository.name
-  name        = "automation"
+  name        = "automation fobar"
   color       = "0366d6"
   description = "Changes to CI/CD, workflows, and automation"
 }

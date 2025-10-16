@@ -1,5 +1,5 @@
 {
-  description = "Web App Test";
+  description = "Web App Test fobar";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
