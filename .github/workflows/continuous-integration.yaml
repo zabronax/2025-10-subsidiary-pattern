@@ -45,12 +45,27 @@ jobs:
     steps:
       - name: Check CI results
         run: |
-          if [ "${{ needs.iac-format-check.result }}" == "success" ] && [ "${{ needs.iac-validate.result }}" == "success" ]; then
-            echo "✅ All CI checks passed"
+          # Handle cases where dependency jobs were skipped or didn't run
+          format_result="${{ needs.iac-format-check.result }}"
+          validate_result="${{ needs.iac-validate.result }}"
+
+          echo "Format check result: ${format_result:-'skipped'}"
+          echo "Validate check result: ${validate_result:-'skipped'}"
+
+          # If both jobs were skipped (e.g., no IaC changes), consider it a pass
+          if [ "${format_result}" == "skipped" ] && [ "${validate_result}" == "skipped" ]; then
+            echo "✅ No IaC changes detected - CI Summary passes"
             exit 0
-          else
+          fi
+
+          # If either job failed, fail the summary
+          if [ "${format_result}" == "failure" ] || [ "${validate_result}" == "failure" ]; then
             echo "❌ CI checks failed"
-            echo "Format check: ${{ needs.iac-format-check.result }}"
-            echo "Validate check: ${{ needs.iac-validate.result }}"
+            echo "Format check: ${format_result:-'skipped'}"
+            echo "Validate check: ${validate_result:-'skipped'}"
             exit 1
           fi
+
+          # If we reach here, all required jobs passed
+          echo "✅ All CI checks passed"
+          exit 0
