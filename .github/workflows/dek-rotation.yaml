@@ -1,0 +1,50 @@
+name: DEK Rotation
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run weekly on Sundays at 2:00 AM UTC
+    - cron: "0 2 * * 0"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  rotate-dek:
+    name: Rotate DEK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rotate DEK and create PR
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          nix develop --command just secrets-rotate-dek
+
+          if ! git diff --quiet; then
+            git add .
+            git commit -m "chore: rotate DEK for all secrets"
+            git push -u origin HEAD:dek-rotation-$(date +%Y%m%d)
+          fi
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "🔄 Weekly DEK Rotation - $(date +'%Y-%m-%d')"
+          body: "Weekly rotation of Data Encryption Keys for all secrets files."
+          branch: dek-rotation-$(date +%Y%m%d)
+          delete-branch: true
