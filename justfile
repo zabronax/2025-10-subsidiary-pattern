@@ -63,3 +63,8 @@ _for-each-secret-file action:
 [doc("Update keys for all secrets files")]
 secrets-update-keys:
     @just _for-each-secret-file "sops updatekeys --yes --input-type yaml"
+
+[group("Secrets")]
+[doc("Rotate DEK (Data Encryption Keys) for all secrets files")]
+secrets-rotate-dek:
+    @just _for-each-secret-file "sops updatekeys --yes --input-type yaml --rotate"
