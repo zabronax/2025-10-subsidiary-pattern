@@ -31,6 +31,31 @@ jobs:
           echo "date=$(date -u +%Y%m%d%H%M)" >> $GITHUB_OUTPUT
           echo "date-formatted=$(date -u +%Y-%m-%dT%H:%MZ)" >> $GITHUB_OUTPUT
 
+      # --- NEW: Check for existing unmerged DEK rotation PR ---
+      - name: Check for existing DEK rotation PR
+        id: check_pr
+        run: |
+          existing=$(gh pr list \
+            --search "head:dek-rotation" \
+            --state open \
+            --json number --jq '.[0].number' || true)
+
+          if [ -n "$existing" ]; then
+            echo "found=true" >> $GITHUB_OUTPUT
+            echo "Existing PR: #$existing"
+          else
+            echo "found=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # If PR exists, skip the rest completely
+      - name: Stop if PR exists
+        if: steps.check_pr.outputs.found == 'true'
+        run: |
+          echo "A DEK rotation PR is already open. Exiting."
+          exit 0
+
       - name: Rotate DEK
         run: |
           nix develop --command just secrets-rotate-dek
