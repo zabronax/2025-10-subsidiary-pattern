@@ -14,14 +14,14 @@ module "delegated_domain_cluster" {
 
   dnssec_ds_records = [
     {
-      key_tag     = "22897"
-      digest      = "74EB0E251805E0D823557450252DE2EFE74F88E3AA8E163AE819D2CE14C855C9"
+      key_tag     = "17352"
+      digest      = "ff54ad74633e8db6e242da78356187efad40216504a9bbe660d3e8771984dad6"
       algorithm   = 13
       digest_type = 2
     },
     {
-      key_tag     = "22897"
-      digest      = "BEDF264FEEAB348E8057185F7006FA02E9C99B3BD5C36BAC89FFFEE50EC3F1DF92E17E20B80FF29B4B66789AE4C52578"
+      key_tag     = "17352"
+      digest      = "206844e73b5d715b5e12838e300ebf5465cf9e98bd83d6f0e965b22481c47a81c4ad5e63da7747bf9167725634f97843"
       algorithm   = 13
       digest_type = 4
     }
